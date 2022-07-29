@@ -4,10 +4,13 @@
 
     </head>
     <body>
-        <% if (err) { %>
+         <% if (err) { %>
             <h2><%= err.message %></h2>
-        <% } %>
+        <% } %> 
+        
+        
         <form action="/signUp" method="POST">
+            <input type="hidden" name="_csrf" value="<%= surf %>">
             <label for="name">name</label>
             <input type="text" name="name" id="name"/>
             <label for="userName">userName</label>
