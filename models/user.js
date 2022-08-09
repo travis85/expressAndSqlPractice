@@ -1,9 +1,8 @@
 const database = require('./database')
 const { DataTypes, Model } = require('sequelize')
-const models = require('.')
 
 class User extends Model {}
-
+//SEQULIZE TEMPLATE
 User.init({
     userName: {
         type: DataTypes.TEXT,
@@ -24,10 +23,16 @@ User.init({
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    session_id: {
+        type: DataTypes.TEXT,
+        unique: true,
+        primaryKey: true
+    }
     
 },{
     sequelize: database
 })
+
 
 
 
