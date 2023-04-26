@@ -23,11 +23,7 @@ User.init({
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    profile_photo: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-        defaultValue: https://pixabay.com/images/id-973460/
-    },
+    
     location: {
         type: DataTypes.TEXT,
         allowNull: true,

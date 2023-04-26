@@ -5,13 +5,20 @@ const path = require('path')
 const models = require('./models')
 const User = require('./models/user')
 const app = express()
+require('dotenv').config({path:'.env'});
 const PORT = process.env.PORT || 3000 
 const session = require('express-session');
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const csurf = require('csurf')
+const firebase = require("firebase/storage") 
+const storage = require('./firebase');
+const { uploadBytes } = require('firebase/storage');
+const multer = require('multer');
+
 
 app.set('view engine', 'ejs') //PROGRAM TO CONSTRUCT HTML FILES
 app.set('views', path.join(__dirname, 'views')) //WHERE THE TEMPLATE FILE ARE AT RELATIVE TO EJS
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 const sess ={  //MIDDLEWARE THAT ALLOWS US TO KEEP TRACK OF USERS BY STORING COOKIES IN THERE BROWSER TO IDENTIFY THEM (ENCRYPTION/ DECRYPTION)
@@ -50,7 +57,8 @@ app.use(async (requst, response, next) => {
 // Browser makes request -> Express does stuff -> body is parsed -> session is created or located -> CSRF info is checked -> DB authentication/connection -> Route handler sends response
 
 app.get('/signUp', async (req, res) => {
-    res.render('signUp', { err : false, surf: req.csrfToken()})
+        
+    res.render('signUp', { err: false, surf: req.csrfToken() })
 })
 
 app.post('/signUp', async (req, res) => {
@@ -71,6 +79,8 @@ app.post('/signUp', async (req, res) => {
     res.send('post success')
 })
 
+
+
 app.get('/logIn', async (req, res) => {
     res.render('logIn', {surf : req.csrfToken()})
 })
@@ -82,10 +92,55 @@ app.post('/logIn', async (req, res) => {
     } else {
         res.send('Not a valid User')
     }
-     console.log(req.session.userid)
+     console.log(req.session.useid)
             
     
 })
+app.get('/editUser', async (req, res) => {
+    res.render('editUser', {surf : req.csrfToken()})
+})
+
+app.get('/landingPage', async (req, res) => {
+    res.render('landingPage')
+})
+
+app.post('/editUser', multer().single('img'), async (req, res) => {
+
+    const profilePic = 'anyString'
+    const photoRef = firebase.ref(storage, profilePic);
+
+    console.log(req.file)
+    //  await firebase.uploadBytes(storageRef, )
+
+    
+
+})
+
+
+app.get('/:userId', async (req, res) => {// colon is special character that repesents a variable
+    const user = await User.findOne({ where: { userName: req.params.userId } })
+    if (!user) {
+        return res.redirect('/landingPage')
+    }
+
+    let userPhoto
+    console.log(user)
+
+    try {
+        userPhoto = await firebase.getDownloadURL(firebase.ref(storage, user.userName))
+    } catch (err) {
+        userPhoto = await firebase.getDownloadURL(firebase.ref(storage, 'profilepic_default.png'))
+        console.log(err)
+    }
+    res.render('user', {
+        user: user,
+        userPhoto: userPhoto
+    
+    })
+})
+
+
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 

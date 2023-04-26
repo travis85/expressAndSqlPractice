@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- !!!TODO!!! used favcon as default to stop error come back to change -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo="> 
     <title>Document</title>
 </head>
 <body>
     
-   <h1> <%= user.name %> </h1>
     
-   <h3> <%= user.userName %></h3>
-
-    <%=  %>
-
+    <img src="<%= userPhoto %>">
+    <h2><%= user.userName%> <button>Edit</button></h2>
+    <h3>Location: <%= user.location%></h3>
+    <h3>Bio: <%= user.bio%></h3>
 </body>
 </html>
